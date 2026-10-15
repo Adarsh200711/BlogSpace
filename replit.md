@@ -1,19 +1,18 @@
-# [Project name]
+# BlogSpace
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An open writing community where people publish ideas, read other perspectives, and discuss articles through comments.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm run typecheck` — typecheck libraries and all workspace packages
+- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI contract
+- `pnpm --filter @workspace/db run push` — apply development PostgreSQL schema changes
+- Required env: `DATABASE_URL`; Clerk keys are provisioned through Replit-managed auth
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React, Vite, Wouter, TanStack Query
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
@@ -22,15 +21,22 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/blogspace/` — responsive web application and Clerk pages
+- `artifacts/api-server/src/routes/blogspace.ts` — BlogSpace REST endpoints
+- `lib/api-spec/openapi.yaml` — API contract and generated client source
+- `lib/db/src/schema/` — user, post, and comment tables
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Clerk owns sign-up, sign-in, browser sessions, and logout; PostgreSQL stores only the app profile mirror and writing data.
+- Every account's app profile is keyed by its Clerk user ID so posts and comments can enforce ownership with foreign keys.
+- Posts publish immediately; there is no draft or moderation state in this version.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Read published posts and comments without an account.
+- Register and sign in, publish posts, edit or delete only your own posts, and comment while signed in.
+- Manage posts and view writing and engagement totals on the writer dashboard.
 
 ## User preferences
 
@@ -38,7 +44,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Define API changes in `lib/api-spec/openapi.yaml` and rerun codegen before using new client or server schemas.
+- Browser API calls use Clerk's same-origin session cookie; do not add bearer-token handling or a custom API logout flow.
+- Apply database changes to development with `pnpm --filter @workspace/db run push`.
 
 ## Pointers
 

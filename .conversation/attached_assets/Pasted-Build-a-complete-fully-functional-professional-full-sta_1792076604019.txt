@@ -1,0 +1,113 @@
+Build a complete, fully functional, professional full-stack web application for my Thiranex internship Task 4: **Blog Platform with Comments**.
+
+I am a beginner and have limited time, so complete the entire project without asking me unnecessary questions. Inspect the existing workspace first, reuse working code where possible, and make all required changes yourself.
+
+## 1. Project Requirements
+
+Create a responsive blogging website where users can register, log in, create blog posts, edit their own posts, delete their own posts, read posts created by other users, and add comments to blog posts.
+
+## 2. Frontend Design
+
+Create a modern, professional blogging interface with:
+- A clean homepage displaying all published blog posts.
+- A navigation bar with the website name "BlogSpace", Home, Create Post, My Posts, Login, and Register options.
+- Individual blog cards displaying the title, a short excerpt, author name, publication date, and a Read More button.
+- A blog details page with the complete article and its comments.
+- A form to create and edit blog posts with title and content fields.
+- A comment input box and a list of comments under each post.
+- Registration and login pages with proper validation.
+- A user dashboard showing the user's own blog posts and Edit and Delete buttons.
+- Loading indicators, success messages, error messages, and confirmation before deleting.
+- Responsive design for mobile phones, tablets, and desktops.
+- A professional color scheme, readable typography, suitable spacing, and attractive buttons.
+
+## 3. Authentication
+
+Implement real user registration and login, not just a visual login form.
+
+Requirements:
+- Store user accounts in the database.
+- Hash passwords securely; never store plain-text passwords.
+- Validate registration and login inputs.
+- Maintain authenticated sessions securely.
+- Restrict post creation, editing, deletion, and commenting to logged-in users.
+- Allow users to edit or delete only their own posts.
+- Display the logged-in user's name and provide a logout option.
+- Protect backend routes against unauthorized requests.
+
+## 4. Blog Post Features
+
+Implement complete CRUD functionality:
+- Create a blog post with a title and content.
+- Display all published blog posts on the homepage.
+- View a complete individual post.
+- Edit an existing post.
+- Delete an existing post after confirmation.
+- Show the author's name and publication date.
+- Ensure posts remain saved after refreshing the page or restarting the application.
+
+## 5. Comments
+
+Implement a fully working comment system:
+- Logged-in users can add comments to blog posts.
+- Display comments below the corresponding post.
+- Show the comment author's name and date.
+- Save comments in the database.
+- Prevent empty comments.
+- Make sure each comment is linked to the correct post and user.
+
+## 6. Backend REST APIs
+
+Implement a real backend with RESTful API endpoints for:
+- User registration and login.
+- User logout and authentication status.
+- Retrieving blog posts and individual posts.
+- Creating, editing, and deleting blog posts.
+- Retrieving and creating comments.
+- Retrieving the current user's posts.
+
+Use appropriate HTTP methods and status codes, validate incoming data, handle errors properly, and enforce authentication and ownership checks on the server.
+
+## 7. Database
+
+Use a persistent database supported by the current Replit environment. Prefer PostgreSQL if it is already configured or can be configured easily. Reuse the existing database setup if the project already has one.
+
+Create appropriate tables for:
+- Users
+- Blog posts
+- Comments
+
+Use primary keys, foreign keys, and appropriate relationships. Connect comments to both their authors and their blog posts. Do not use temporary in-memory arrays as the main database. Provide any necessary database schema, migrations, and environment variable setup.
+
+## 8. Technology
+
+Inspect the current project and preserve its existing working technology stack wherever practical. If no application exists, use a straightforward full-stack setup with React for the frontend, Node.js and Express for the backend, and PostgreSQL for persistent storage.
+
+Keep the project easy for a beginner to understand and run. Do not introduce unnecessary libraries or complicated architecture.
+
+## 9. Testing and Final Verification
+
+After implementation:
+- Install required dependencies.
+- Start the application and resolve startup errors.
+- Test registration, login, logout, and session handling.
+- Test creating, viewing, editing, and deleting blog posts.
+- Test adding and displaying comments.
+- Test that data remains available after page refreshes.
+- Verify that users cannot modify other users' posts.
+- Verify that the layout works on mobile and desktop.
+- Fix errors you discover instead of merely describing them.
+
+Add a few clearly labelled demo posts if useful, but do not create fake user accounts with hardcoded passwords or pretend that untested features work.
+
+## 10. Final Deliverables
+
+Provide:
+- The complete working frontend and backend.
+- Persistent database integration.
+- All required REST API routes.
+- A README with the project description, features, technology stack, setup instructions, and API endpoint documentation.
+- Clear instructions for configuring environment variables and starting the application.
+- A final checklist stating which features were actually tested and any remaining issues.
+
+Make the application fully functional and ready for my Thiranex Task 4 demonstration and submission. Prioritize working functionality, reliable data storage, and a professional interface over unnecessary animations. Do not stop after creating the frontend; complete and test the backend and database integration too.

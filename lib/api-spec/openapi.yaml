@@ -10,6 +10,14 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Current authenticated account
+  - name: posts
+    description: Published blog posts and author-owned post management
+  - name: comments
+    description: Comments attached to blog posts
+  - name: dashboard
+    description: Current user's writing overview
 paths:
   /healthz:
     get:
@@ -24,7 +32,213 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get the current authenticated user
+      responses:
+        "200":
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Authentication required
+  /posts:
+    get:
+      operationId: listPosts
+      tags: [posts]
+      summary: List published blog posts
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 120
+      responses:
+        "200":
+          description: Published posts, newest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PostSummary"
+    post:
+      operationId: createPost
+      tags: [posts]
+      summary: Create a blog post
+      security:
+        - clerkSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+      responses:
+        "201":
+          description: Created post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "400":
+          description: Invalid post input
+        "401":
+          description: Authentication required
+  /posts/{postId}:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      operationId: getPost
+      tags: [posts]
+      summary: Get a published post
+      responses:
+        "200":
+          description: Post details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          description: Post not found
+    patch:
+      operationId: updatePost
+      tags: [posts]
+      summary: Update a post owned by the current user
+      security:
+        - clerkSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUpdate"
+      responses:
+        "200":
+          description: Updated post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "401":
+          description: Authentication required
+        "403":
+          description: Post belongs to another user
+        "404":
+          description: Post not found
+    delete:
+      operationId: deletePost
+      tags: [posts]
+      summary: Delete a post owned by the current user
+      security:
+        - clerkSession: []
+      responses:
+        "204":
+          description: Post deleted
+        "401":
+          description: Authentication required
+        "403":
+          description: Post belongs to another user
+        "404":
+          description: Post not found
+  /me/posts:
+    get:
+      operationId: listMyPosts
+      tags: [posts]
+      summary: List the current user's posts
+      security:
+        - clerkSession: []
+      responses:
+        "200":
+          description: Posts owned by the current user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PostSummary"
+        "401":
+          description: Authentication required
+  /posts/{postId}/comments:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      operationId: listComments
+      tags: [comments]
+      summary: List comments for a post
+      responses:
+        "200":
+          description: Comments in chronological order
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+        "404":
+          description: Post not found
+    post:
+      operationId: createComment
+      tags: [comments]
+      summary: Add a comment to a post
+      security:
+        - clerkSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentInput"
+      responses:
+        "201":
+          description: Created comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "400":
+          description: Invalid or empty comment
+        "401":
+          description: Authentication required
+        "404":
+          description: Post not found
+  /me/summary:
+    get:
+      operationId: getMyDashboardSummary
+      tags: [dashboard]
+      summary: Get writing and engagement totals for the current user
+      security:
+        - clerkSession: []
+      responses:
+        "200":
+          description: Current user's dashboard totals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+        "401":
+          description: Authentication required
 components:
+  securitySchemes:
+    clerkSession:
+      type: apiKey
+      in: cookie
+      name: __session
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +247,116 @@ components:
           type: string
       required:
         - status
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, email, name, createdAt]
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        authorId:
+          type: string
+        authorName:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, title, content, authorId, authorName, publishedAt, updatedAt]
+    PostSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        excerpt:
+          type: string
+        authorId:
+          type: string
+        authorName:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        commentCount:
+          type: integer
+      required: [id, title, excerpt, authorId, authorName, publishedAt, commentCount]
+    PostInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 160
+        content:
+          type: string
+          minLength: 1
+          maxLength: 50000
+      required: [title, content]
+    PostUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 160
+        content:
+          type: string
+          minLength: 1
+          maxLength: 50000
+      required: [title, content]
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        postId:
+          type: integer
+        authorId:
+          type: string
+        authorName:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, postId, authorId, authorName, content, createdAt]
+    CommentInput:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 2000
+      required: [content]
+    DashboardSummary:
+      type: object
+      properties:
+        postCount:
+          type: integer
+        commentCount:
+          type: integer
+        commentsReceived:
+          type: integer
+      required: [postCount, commentCount, commentsReceived]
 

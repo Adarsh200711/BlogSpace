@@ -1,0 +1,1 @@
+- [BlogSpace auth boundary](blogspace-auth.md) — Clerk owns credentials and browser sessions; PostgreSQL mirrors the app profile and stores writing data.
